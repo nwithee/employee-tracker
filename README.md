@@ -27,6 +27,7 @@
   NA
 
   ## Demo Video
+  https://github.com/nwithee/employee-tracker/blob/main/assets/Screen%20Recording%202022-05-01%20at%206.36.20%20PM.mov
   
   ## Questions?
   You can find all of my projects at https://github.com/nwithee

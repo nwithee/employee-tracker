@@ -2,6 +2,7 @@ const inquirer = require('inquirer');
 const cTable = require('console.table');
 
 const connection = require('./config/connection');
+const { listenerCount } = require('./config/connection');
 
 const promptUser = () => {
     inquirer.prompt([
@@ -47,10 +48,12 @@ const promptUser = () => {
         }
 
         if(choices === 'Update an Employee Role') {
-            updateRole();
+            updateEmployee();
         }
     });
 };
+
+//functions to capture things
 
 //View all departments
 const viewAllDepartments = () => {
@@ -108,6 +111,129 @@ const addADepartment = () => {
         });           
     });
 };
+
+//Add a role
+const addARole = () => {
+    const displayRoles = `SELECT * FROM roles`
+    connection.query(displayRoles, (err, results) => {
+        if (err) throw err;
+
+        console.table(('List of current Roles:'), results);
+        
+        inquirer.prompt ([
+            {
+                name: 'role_title',
+                type: 'input',
+                message: 'What is the role title?'
+            },
+            {
+                name: 'role_salary',
+                type: 'input',
+                message: 'What is the salary for the role?'
+            },
+            {
+                name: 'role_department',
+                type: 'list',
+                choices: [connection.query(`SELECT * FROM departments`, (err, results) =>{ 
+                    results.map(function(data){
+                        return data.departments_id;
+                    })
+                })],
+                message: 'Select the Department for this new Role'
+            }
+        ])
+        .then ((answer) => {
+            connection.query(
+                "INSERT INTO roles SET ?",
+                {
+                    title: answer.role_title,
+                    salary: answer.role_salary,
+                    department_id: answer.role_department
+                })   
+                if (err) throw err;
+                    viewAllRoles();         
+        });
+    });
+};
+
+//Add employee
+const addAnEmployee = () => {
+    const displayEmployees = `SELECT * FROM employees`
+    connection.query(displayEmployees, (err, results) => {
+        if (err) throw err;
+
+        console.table(('List of current Employees:'), results);
+        
+        inquirer.prompt ([
+            {
+                name: 'first_name',
+                type: 'input',
+                message: 'What is the employees first name?'
+            },
+            {
+                name: 'last_name',
+                type: 'input',
+                message: 'what is the employees last name?'
+            },
+            {
+                name: 'role_department',
+                type: 'list',
+                choices: [connection.query(`SELECT * FROM departments`, (err, results) =>{ 
+                    results.map(function(data){
+                        return data.departments_id;
+                    })
+                })],
+                message: 'What is the employees role'
+            },
+            {
+                name: 'role_manager',
+                type: 'list',
+                choices: [connection.query(`SELECT * FROM departments`, (err, results) =>{ 
+                    results.map(function(data){
+                        return data.departments_id;
+                    })
+                })],
+                message: 'Who is the employees manager?'
+            }
+        ])
+        .then ((answer) => {
+            connection.query(
+                "INSERT INTO employees SET ?",
+                {
+                    first_name: answer.first_name,
+                    last_name: answer.last_name,
+                    role_id: answer.role_department,
+                    manager_id: answer.role_manager
+                })   
+                if (err) throw err;
+                    viewAllEmployees();         
+        });
+    });
+};
+
+//Update employee
+const updateEmployee = () => {
+    const empQuery = `SELECT CONCAT (first_name," ", last_name) AS full_name FROM employees`
+    connection.query(empQuery, (err, results)=> {
+        if (err) throw err;
+
+        inquirer.prompt ([
+            {
+                name: 'employee',
+                type: 'list',
+                choices: function() {
+                    let choiceArray = results.map(choice => choice.full_name);
+                    return choiceArray;
+                },
+                message: 'Select an employee to update their role'
+            }
+        
+        ])
+        .then (()=>{
+            viewAllEmployees();
+        });
+    })
+}
 
 
 promptUser();

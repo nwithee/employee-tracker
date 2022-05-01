@@ -12,11 +12,11 @@ VALUES
   ('Junior', 40000, 3);
 
 
-INSERT INTO employees (first_name, last_name, role_id)
+INSERT INTO employees (first_name, last_name, role_id, manager_id)
 VALUES
-  ('Jane', 'Smith', 1),
-  ('Tim', 'Edwards', 2),
-  ('Diane', 'Johnson', 4);
+  ('Jane', 'Smith', 1, 1),
+  ('Tim', 'Edwards', 2, 1),
+  ('Diane', 'Johnson', 4,1);
  
   
 

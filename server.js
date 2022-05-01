@@ -2,7 +2,6 @@ const inquirer = require('inquirer');
 const cTable = require('console.table');
 
 const connection = require('./config/connection');
-const { listenerCount } = require('./config/connection');
 
 const promptUser = () => {
     inquirer.prompt([
@@ -52,8 +51,6 @@ const promptUser = () => {
         }
     });
 };
-
-//functions to capture things
 
 //View all departments
 const viewAllDepartments = () => {
